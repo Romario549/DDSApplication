@@ -2,9 +2,12 @@
 Веб-сервис для управления движением денежных средств (ДДС)\
 Полный список команд для запуска
 
+
+
 Сервер:
 * cd backend
 * python -m venv venv
+* cоздать .env файл и установить переменные как в .env.example
 * venv\Scripts\activate
 * pip install -r requirements.txt
 * python manage.py makemigrations
