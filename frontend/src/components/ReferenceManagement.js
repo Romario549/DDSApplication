@@ -17,7 +17,6 @@ const ReferenceManagement = () => {
 
   const [loading, setLoading] = useState(false);
 
-  // Загрузка данных
   const loadData = async () => {
     setLoading(true);
     try {
@@ -46,7 +45,6 @@ const ReferenceManagement = () => {
     loadData();
   }, []);
 
-  // Обработчики форм
   const handleCreate = async () => {
     try {
       let response;

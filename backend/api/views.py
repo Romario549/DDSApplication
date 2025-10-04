@@ -52,7 +52,7 @@ class CategoryViewSet(SoftDeleteViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filterset_fields = ['type']  # Добавляем фильтрацию по типу
+    filterset_fields = ['type']  
     search_fields = ['name', 'description']
     ordering_fields = ['name', 'created_at']
 
@@ -102,7 +102,6 @@ class NoteViewSet(SoftDeleteViewSet):
             total_transactions=Count('id')
         )
         
-        # Преобразование None в 0
         summary = {k: (v or 0) for k, v in summary.items()}
         summary['balance'] = summary['total_income'] - summary['total_expense']
         

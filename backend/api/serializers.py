@@ -45,14 +45,12 @@ class NoteSerializer(serializers.ModelSerializer):
         return obj.created_date.strftime('%d.%m.%Y %H:%M')
     
     def validate(self, data):
-        # Проверка связи категории и типа операции
         if 'category' in data and 'type' in data:
             if data['category'].type != data['type']:
                 raise serializers.ValidationError({
                     'category': 'Выбранная категория не принадлежит выбранному типу операции'
                 })
         
-        # Проверка связи подкатегории и категории
         if 'subcategory' in data and 'category' in data:
             if data['subcategory'].category != data['category']:
                 raise serializers.ValidationError({

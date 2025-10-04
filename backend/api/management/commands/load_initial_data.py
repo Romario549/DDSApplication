@@ -5,7 +5,6 @@ class Command(BaseCommand):
     help = 'Load initial data for DDS application'
     
     def handle(self, *args, **options):
-        # Статусы
         statuses = [
             {'name': 'Бизнес', 'description': 'Бизнес операции'},
             {'name': 'Личное', 'description': 'Личные финансы'},
@@ -14,8 +13,7 @@ class Command(BaseCommand):
         
         for status_data in statuses:
             Status.objects.get_or_create(**status_data)
-        
-        # Типы операций
+
         types = [
             {'name': 'Пополнение', 'description': 'Поступление денежных средств'},
             {'name': 'Списание', 'description': 'Расход денежных средств'},
@@ -26,7 +24,6 @@ class Command(BaseCommand):
             type_obj, _ = Type.objects.get_or_create(**type_data)
             type_objects[type_obj.name] = type_obj
         
-        # Категории для каждого типа
         categories_data = {
             'Пополнение': [
                 {'name': 'Доходы', 'description': 'Источники доходов'},
@@ -49,18 +46,17 @@ class Command(BaseCommand):
                 )
                 category_objects[f"{type_name}_{category.name}"] = category
                 
-                # Подкатегории для каждой категории
                 if type_name == 'Пополнение':
                     if category.name == 'Доходы':
                         subcategories = ['Продажи', 'Услуги', 'Прочее']
-                    else:  # Инвестиции
+                    else: 
                         subcategories = ['Дивиденды', 'Проценты', 'Рост капитала']
-                else:  # Списание
+                else:  
                     if category.name == 'Инфраструктура':
                         subcategories = ['VPS', 'Proxy', 'Хостинг', 'Домены']
                     elif category.name == 'Маркетинг':
                         subcategories = ['Farpost', 'Avito', 'Контекстная реклама', 'SMM']
-                    else:  # Зарплаты
+                    else:  
                         subcategories = ['Штатные сотрудники', 'Фрилансеры']
                 
                 for subcategory_name in subcategories:

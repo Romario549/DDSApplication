@@ -15,7 +15,6 @@ const NoteForm = ({ note, statuses, types, categories, subcategories, onSubmit, 
   const [filteredSubcategories, setFilteredSubcategories] = useState([]);
   const [isInitialized, setIsInitialized] = useState(false);
 
-  // Главный эффект для инициализации
   useEffect(() => {
     const initializeForm = async () => {
       if (note) {
@@ -26,7 +25,6 @@ const NoteForm = ({ note, statuses, types, categories, subcategories, onSubmit, 
           .toISOString()
           .slice(0, 16);
 
-        // Получаем полные данные записи если нужно
         let finalNote = note;
         if ((!note.subcategory || !note.category) && note.id) {
           try {
@@ -38,7 +36,6 @@ const NoteForm = ({ note, statuses, types, categories, subcategories, onSubmit, 
           }
         }
 
-        // Сначала устанавливаем данные формы
         const initialFormData = {
           created_date: localDate,
           status: finalNote.status,
@@ -52,14 +49,12 @@ const NoteForm = ({ note, statuses, types, categories, subcategories, onSubmit, 
         console.log('Setting initial form data:', initialFormData);
         setFormData(initialFormData);
 
-        // Загружаем категории для типа и подкатегории для категории
         if (finalNote.type) {
           await loadCategoriesForType(finalNote.type, finalNote.category);
         }
 
         setIsInitialized(true);
       } else {
-        // Новая запись
         const now = new Date();
         const localDate = new Date(now.getTime() - now.getTimezoneOffset() * 60000)
           .toISOString()
@@ -76,7 +71,6 @@ const NoteForm = ({ note, statuses, types, categories, subcategories, onSubmit, 
     initializeForm();
   }, [note]);
 
-  // Функция для загрузки категорий по типу
   const loadCategoriesForType = async (typeId, currentCategory = null) => {
     try {
       const response = await cashflowAPI.getCategoriesByType(typeId);
@@ -84,34 +78,29 @@ const NoteForm = ({ note, statuses, types, categories, subcategories, onSubmit, 
       console.log('Loaded categories for type:', cats);
       setFilteredCategories(cats);
       
-      // Проверяем что категория существует в загруженных
       if (currentCategory) {
         const catExists = cats.find(cat => cat.id == currentCategory);
         if (!catExists) {
           console.warn('Category not found for type, resetting');
           setFormData(prev => ({ ...prev, category: '', subcategory: '' }));
         } else {
-          // Если категория существует, загружаем подкатегории
           await loadSubcategoriesForCategory(currentCategory);
         }
       }
     } catch (error) {
       console.error('Error loading categories:', error);
-      // Fallback на локальные данные
       const localCats = categories.filter(cat => cat.type == typeId);
       setFilteredCategories(localCats);
     }
   };
 
-  // Функция для загрузки подкатегорий по категории
   const loadSubcategoriesForCategory = async (categoryId, currentSubcategory = null) => {
     try {
       const response = await cashflowAPI.getSubcategoriesByCategory(categoryId);
       const subs = response.data.results || response.data;
       console.log('Loaded subcategories:', subs);
       setFilteredSubcategories(subs);
-      
-      // Проверяем что подкатегория существует в загруженных
+
       if (currentSubcategory) {
         const subExists = subs.find(sub => sub.id == currentSubcategory);
         if (!subExists) {
@@ -121,13 +110,11 @@ const NoteForm = ({ note, statuses, types, categories, subcategories, onSubmit, 
       }
     } catch (error) {
       console.error('Error loading subcategories:', error);
-      // Fallback на локальные данные
       const localSubs = subcategories.filter(sub => sub.category == categoryId);
       setFilteredSubcategories(localSubs);
     }
   };
 
-  // Эффект для изменения типа
   useEffect(() => {
     if (!isInitialized) return;
 
@@ -144,7 +131,6 @@ const NoteForm = ({ note, statuses, types, categories, subcategories, onSubmit, 
     handleTypeChange();
   }, [formData.type, isInitialized]);
 
-  // Эффект для изменения категории
   useEffect(() => {
     if (!isInitialized) return;
 

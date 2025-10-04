@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { cashflowAPI } from './services/api';
 import NoteForm from './components/NoteForm';
-import ReferenceManagement from './components/ReferenceManagement'; // Добавляем импорт
+import ReferenceManagement from './components/ReferenceManagement'; 
 import './styles.css';
 
 function App() {
-  const [currentPage, setCurrentPage] = useState('notes'); // Добавляем состояние для страниц
+  const [currentPage, setCurrentPage] = useState('notes');
   const [notes, setNotes] = useState([]);
   const [statuses, setStatuses] = useState([]);
   const [types, setTypes] = useState([]);
@@ -23,15 +23,14 @@ function App() {
     subcategory: '',
   });
 
-  // Загрузка данных при старте
   useEffect(() => {
     loadReferences();
     if (currentPage === 'notes') {
       loadNotes();
     }
-  }, [currentPage]); // Добавляем currentPage в зависимости
+  }, [currentPage]);
 
-  // Загрузка справочников
+
   const loadReferences = async () => {
     try {
       const [statusesRes, typesRes, categoriesRes, subcategoriesRes] = await Promise.all([
@@ -51,7 +50,6 @@ function App() {
     }
   };
 
-  // Загрузка записей
   const loadNotes = async (customFilters = filters) => {
     setLoading(true);
     try {
@@ -65,7 +63,6 @@ function App() {
     }
   };
 
-  // Создание записи
   const handleCreate = async (data) => {
     try {
       await cashflowAPI.createNote(data);
@@ -78,7 +75,6 @@ function App() {
     }
   };
 
-  // Редактирование записи
   const handleUpdate = async (id, data) => {
     try {
       await cashflowAPI.updateNote(id, data);
@@ -92,7 +88,6 @@ function App() {
     }
   };
 
-  // Удаление записи
   const handleDelete = async (id) => {
     if (window.confirm('Вы уверены, что хотите удалить эту запись?')) {
       try {
@@ -106,14 +101,12 @@ function App() {
     }
   };
 
-  // Обработчик фильтров
   const handleFilterChange = (key, value) => {
     const newFilters = { ...filters, [key]: value };
     setFilters(newFilters);
     loadNotes(newFilters);
   };
 
-  // Сброс фильтров
   const resetFilters = () => {
     const emptyFilters = {
       start_date: '',
@@ -127,18 +120,17 @@ function App() {
     loadNotes(emptyFilters);
   };
 
-  // Открытие формы редактирования
   const handleEdit = async (note) => {
     try {
       setLoading(true);
-      // Загружаем полные данные записи с бэкенда
+
       const response = await cashflowAPI.getNote(note.id);
       setEditingNote(response.data);
       setShowForm(true);
     } catch (error) {
       console.error('Error loading note details:', error);
       alert('Ошибка загрузки данных записи');
-      // Fallback - используем данные из списка
+
       setEditingNote(note);
       setShowForm(true);
     } finally {
@@ -146,7 +138,6 @@ function App() {
     }
   };
 
-  // Закрытие формы
   const handleCloseForm = () => {
     setShowForm(false);
     setEditingNote(null);
@@ -154,7 +145,6 @@ function App() {
 
   return (
     <div className="app">
-      {/* Изменяем header для навигации */}
       <header className="app-header">
         <div className="nav-buttons">
           <button 
@@ -183,10 +173,8 @@ function App() {
         )}
       </header>
 
-      {/* Рендерим соответствующую страницу */}
       {currentPage === 'notes' && (
         <>
-          {/* Форма создания/редактирования */}
           {showForm && (
             <NoteForm
               note={editingNote}
@@ -199,7 +187,6 @@ function App() {
             />
           )}
 
-          {/* Фильтры */}
           <div className="filters">
             <h3>Фильтры</h3>
             <div className="filter-row">
@@ -267,7 +254,6 @@ function App() {
             </div>
           </div>
 
-          {/* Таблица записей */}
           <div className="note-list">
             <h3>Список операций</h3>
             {loading ? (
@@ -331,8 +317,7 @@ function App() {
           </div>
         </>
       )}
-
-
+      
       {currentPage === 'references' && (
         <ReferenceManagement />
       )}
